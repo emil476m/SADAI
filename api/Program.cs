@@ -1,44 +1,58 @@
-var builder = WebApplication.CreateBuilder(args);
+using System.Reflection;
+using System.Text.Json;
+using Fleck;
+using lib;
+using Serilog;
+using api.Middleware;
+using socketAPIFirst;
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+public static class StartUp
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    public static void Main(String[] args)
+    {
+        var app = StatUp(args);
+        app.Run();
+    }
 
-app.UseHttpsRedirection();
+    public static WebApplication StatUp(String[] args)
+    {
+        Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console(
+                outputTemplate: "\n{Timestamp:yyyy-MM-dd HH:mm:ss} [{Level}] {Message}{NewLine}{Exception}\n")
+            .CreateLogger();
 
-var summaries = new[]
-{
-    "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
+        var server = new WebSocketServer("ws://0.0.0.0:8181");
+        var builder = WebApplication.CreateBuilder(args);
+        var clientEventHandler = builder.FindAndInjectClientEventHandlers(Assembly.GetExecutingAssembly());
 
-app.MapGet("/weatherforecast", () =>
-{
-    var forecast =  Enumerable.Range(1, 5).Select(index =>
-        new WeatherForecast
-        (
-            DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-            Random.Shared.Next(-20, 55),
-            summaries[Random.Shared.Next(summaries.Length)]
-        ))
-        .ToArray();
-    return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
+        var app = builder.Build();
 
-app.Run();
+        server.Start(ws =>
+        {
+            ws.OnOpen = () =>
+            {
+                StateService.AddConection(ws);
+            };
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+            ws.OnClose = () =>
+            {
+                StateService.WsConections.Remove(ws.ConnectionInfo.Id);
+            };
+
+
+            ws.OnMessage = async message =>
+            {
+                try
+                {
+                    await app.InvokeClientEventHandler(clientEventHandler, ws, message);
+                }
+                catch (Exception e)
+                {
+                    e.Handle(ws, e.Message);
+                }
+            };
+        });
+
+        return app;
+    }
 }
