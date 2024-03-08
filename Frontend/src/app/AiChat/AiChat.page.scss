@@ -26,3 +26,40 @@ ion-menu-button {
 #container a {
   text-decoration: none;
 }
+
+
+
+
+
+
+#messageInput {
+  background-color: #656565;
+  border-radius: 30px;
+  padding: 5%;
+  margin-bottom: 2%;
+  margin-left: 2%;
+  margin-top: 2%
+}
+
+#button {
+  border-radius: 20px;
+  margin-right: 3%;
+}
+
+#textCard {
+  transform: scale(0.8);
+  border-radius: 30px;
+  --ion-text-color: black;
+}
+
+.Textcontainer {
+  display: flex;
+}
+
+.left-card {
+  margin-right: 20%;
+}
+
+.right-card {
+  margin-left: 20%;
+}
