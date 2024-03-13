@@ -4,6 +4,7 @@ import {ActivatedRoute} from "@angular/router";
 import {IonContent} from "@ionic/angular";
 import {FormControl, Validators} from "@angular/forms";
 import {Message} from "../models/Message.model";
+import {BaseDto, ClientWantsToTextServeDto} from "../../assets/BaseDto";
 
 @Component({
   selector: 'app-AiChat',
@@ -44,14 +45,31 @@ import {Message} from "../models/Message.model";
   styleUrls: ['AiChat.page.scss'],
 })
 export class AiChatPage implements OnInit {
-  constructor(private http: HttpClient) {
-  }
+
+  ws: WebSocket = new WebSocket("ws://localhost:8181")
 
   botName : string = "";
 
   message: FormControl<string | null> = new FormControl("", [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
 
   messages: Message[] = [];
+
+  constructor(private http: HttpClient) {
+    this.ws.onmessage = message => {
+      const messageFromServer = JSON.parse(message.data) as BaseDto<any>;
+
+      //@ts-ignore
+      this[messageFromServer.eventType].call(this, messageFromServer);
+    }
+  }
+
+  serverRespondsMessage(dto: ClientWantsToTextServeDto) {
+    let text: Message = {
+      message: dto.message,
+      isUser: dto.isUser,
+    }
+    this.messages.push(text)
+  }
 
   ngOnInit() {
     this.botName = "Gemini";
@@ -85,7 +103,13 @@ export class AiChatPage implements OnInit {
 
       this.messages.push(text)
 
-      //TODO - Send Message
+      var object = {
+        eventType: "ClientWantsToTextServeDto",
+        message: text.message,
+        isUser: text.isUser,
+      }
+
+      this.ws.send(JSON.stringify(object));
     }
 
   }
