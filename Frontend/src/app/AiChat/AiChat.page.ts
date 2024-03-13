@@ -5,6 +5,7 @@ import {IonContent} from "@ionic/angular";
 import {FormControl, Validators} from "@angular/forms";
 import {Message} from "../models/Message.model";
 import {BaseDto, ClientWantsToTextServeDto} from "../../assets/BaseDto";
+import {WebSocketService} from "../WebsocketService";
 
 @Component({
   selector: 'app-AiChat',
@@ -26,7 +27,7 @@ import {BaseDto, ClientWantsToTextServeDto} from "../../assets/BaseDto";
 
       <ion-content #textWindow id="Textcontainer" [scrollEvents]="true">
 
-        <ion-card id="textCard" *ngFor="let message of messages"
+        <ion-card id="textCard" *ngFor="let message of this.ws.messages"
                   [ngClass]="{'left-card': !message.isUser, 'right-card': message.isUser}">
           <ion-tab-bar [ngStyle]="{ 'background-color': message.isUser ? '#001087' : '#3A3B3C' }">
             <ion-title style="color: White">{{ message.message }}</ion-title>
@@ -46,21 +47,14 @@ import {BaseDto, ClientWantsToTextServeDto} from "../../assets/BaseDto";
 })
 export class AiChatPage implements OnInit {
 
-  ws: WebSocket = new WebSocket("ws://localhost:8181")
 
   botName : string = "";
 
   message: FormControl<string | null> = new FormControl("", [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
 
-  messages: Message[] = [];
 
-  constructor(private http: HttpClient) {
-    this.ws.onmessage = message => {
-      const messageFromServer = JSON.parse(message.data) as BaseDto<any>;
+  constructor(private http: HttpClient, protected ws: WebSocketService) {
 
-      //@ts-ignore
-      this[messageFromServer.eventType].call(this, messageFromServer);
-    }
   }
 
   serverRespondsMessage(dto: ClientWantsToTextServeDto) {
@@ -68,7 +62,7 @@ export class AiChatPage implements OnInit {
       message: dto.message,
       isUser: dto.isUser,
     }
-    this.messages.push(text)
+    this.ws.messages.push(text)
   }
 
   ngOnInit() {
@@ -79,15 +73,10 @@ export class AiChatPage implements OnInit {
       message: "Hi I am " + this.botName + "\n I am a AI chat bot",
       isUser: false,
     }
-    let text2: Message = {
-      message: "How may I help you?",
-      isUser: false,
-    }
 
 
-    this.messages = [
-      text1,
-      text2
+    this.ws.messages = [
+      text1
     ];
 
     this.getConnection();
@@ -101,7 +90,7 @@ export class AiChatPage implements OnInit {
         isUser: true,
       }
 
-      this.messages.push(text)
+      this.ws.messages.push(text)
 
       var object = {
         eventType: "ClientWantsToTextServeDto",
@@ -109,7 +98,7 @@ export class AiChatPage implements OnInit {
         isUser: text.isUser,
       }
 
-      this.ws.send(JSON.stringify(object));
+      this.ws.socket.send(JSON.stringify(object));
     }
 
   }
