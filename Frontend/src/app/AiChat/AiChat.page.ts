@@ -4,6 +4,8 @@ import {ActivatedRoute} from "@angular/router";
 import {IonContent} from "@ionic/angular";
 import {FormControl, Validators} from "@angular/forms";
 import {Message} from "../models/Message.model";
+import {BaseDto, ClientWantsToTextServeDto} from "../../assets/BaseDto";
+import {WebSocketService} from "../WebsocketService";
 
 @Component({
   selector: 'app-AiChat',
@@ -25,10 +27,10 @@ import {Message} from "../models/Message.model";
 
       <ion-content #textWindow id="Textcontainer" [scrollEvents]="true">
 
-        <ion-card id="textCard" *ngFor="let message of messages"
+        <ion-card id="textCard" *ngFor="let message of this.ws.messages"
                   [ngClass]="{'left-card': !message.isUser, 'right-card': message.isUser}">
           <ion-tab-bar [ngStyle]="{ 'background-color': message.isUser ? '#001087' : '#3A3B3C' }">
-            <ion-title style="color: White">{{ message.message }}</ion-title>
+            <ion-text style="color: White">{{ message.message }}</ion-text>
           </ion-tab-bar>
         </ion-card>
       </ion-content>
@@ -44,36 +46,40 @@ import {Message} from "../models/Message.model";
   styleUrls: ['AiChat.page.scss'],
 })
 export class AiChatPage implements OnInit {
-  constructor(private http: HttpClient) {
-  }
+
 
   botName : string = "";
 
   message: FormControl<string | null> = new FormControl("", [Validators.required, Validators.minLength(3), Validators.maxLength(50)]);
 
-  messages: Message[] = [];
+
+  constructor(private http: HttpClient, protected ws: WebSocketService) {
+
+  }
+
+  serverRespondsMessage(dto: ClientWantsToTextServeDto) {
+    let text: Message = {
+      message: dto.message,
+      isUser: dto.isUser,
+    }
+    this.ws.messages.push(text)
+  }
+
 
   ngOnInit() {
     this.botName = "Gemini";
 
-
     let text1: Message = {
-      message: "Hi I am " + this.botName + "\n I am a AI chat bot",
-      isUser: false,
-    }
-    let text2: Message = {
-      message: "How may I help you?",
+      message: "Hi I am " + this.botName + "\n I am a AI, all translations may not be accurate so use at your own risk, remember to hit select after selecting the languages",
       isUser: false,
     }
 
 
-    this.messages = [
-      text1,
-      text2
+    this.ws.messages = [
+      text1
     ];
 
     this.getConnection();
-
   }
 
   async sendMessage() {
@@ -83,11 +89,17 @@ export class AiChatPage implements OnInit {
         isUser: true,
       }
 
-      this.messages.push(text)
+      this.ws.messages.push(text)
 
-      //TODO - Send Message
+      var object = {
+        eventType: "ClientWantsToTranslateText",
+        text: text.message,
+        toLan: this.ws.toLanguage,
+        fromLan: this.ws.fromLanguage
+      }
+
+      this.ws.socket.send(JSON.stringify(object));
     }
-
   }
 
 

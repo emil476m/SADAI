@@ -4,6 +4,7 @@ using Fleck;
 using lib;
 using Serilog;
 using api.Middleware;
+using Azure.AI.Translation.Text;
 using socketAPIFirst;
 
 public static class StartUp

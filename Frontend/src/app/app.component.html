@@ -2,11 +2,24 @@
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">
       <ion-content>
-        <ion-list id="inbox-list">
-          <ion-list-header>Inbox</ion-list-header>
-          <ion-note>hi&#64;ionicframework.com</ion-note>
-        </ion-list>
-
+        <ion-item>
+          <ion-title>Languages:</ion-title>
+          <div>
+            <ion-item>
+              <ion-select placeholder="To language" [formControl]="Tlanguage">
+                <ion-select-option *ngFor="let l of this.ws.languages">{{l}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-select placeholder="From language" [formControl]="Flanguage">
+                <ion-select-option *ngFor="let l of this.ws.languages">{{l}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <ion-item>
+              <ion-button (click)="select()">Select</ion-button>
+            </ion-item>
+          </div>
+        </ion-item>
       </ion-content>
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
