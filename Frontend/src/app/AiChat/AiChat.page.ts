@@ -65,12 +65,12 @@ export class AiChatPage implements OnInit {
     this.ws.messages.push(text)
   }
 
+
   ngOnInit() {
     this.botName = "Gemini";
 
-
     let text1: Message = {
-      message: "Hi I am " + this.botName + "\n I am a AI chat bot",
+      message: "Hi I am " + this.botName + "\n I am a AI, all translations may not be accurate so use at your own risk",
       isUser: false,
     }
 
@@ -80,7 +80,6 @@ export class AiChatPage implements OnInit {
     ];
 
     this.getConnection();
-
   }
 
   async sendMessage() {
@@ -100,7 +99,6 @@ export class AiChatPage implements OnInit {
 
       this.ws.socket.send(JSON.stringify(object));
     }
-
   }
 
 

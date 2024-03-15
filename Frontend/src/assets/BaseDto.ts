@@ -18,3 +18,8 @@ export class ServerRespondsToUser extends BaseDto<ServerRespondsToUser>
   message?: string;
   isUser?: boolean;
 }
+
+export class ServerReturnsListOfLanguageNames extends BaseDto<ServerReturnsListOfLanguageNames>
+{
+  names? : Array<string>;
+}

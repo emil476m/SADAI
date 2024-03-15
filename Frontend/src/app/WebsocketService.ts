@@ -1,12 +1,15 @@
 import {Message} from "./models/Message.model";
 import {Router} from "@angular/router";
 import {ToastController} from "@ionic/angular";
-import {BaseDto, ServerRespondsToUser} from "../assets/BaseDto";
+import {BaseDto, ServerRespondsToUser, ServerReturnsListOfLanguageNames} from "../assets/BaseDto";
 import {Injectable} from "@angular/core";
 
 @Injectable({providedIn: 'root'})
 export class WebSocketService {
   messages: Array<Message> = [];
+  languages : Array<string> = [];
+  toLanguage: string = "";
+  fromLanguage: string = "";
   socket: WebSocket = new WebSocket("ws://localhost:8181");
 
   constructor(public router: Router, public toast: ToastController) {
@@ -17,8 +20,14 @@ export class WebSocketService {
     }
   }
 
-  ServerRespondsToUser(dot: ServerRespondsToUser)
+  ServerRespondsToUser(dto: ServerRespondsToUser)
   {
-    this.messages.push(dot as Message);
+    this.messages.push(dto as Message);
+  }
+
+  ServerReturnsListOfLanguageNames(dto: ServerReturnsListOfLanguageNames)
+  {
+    var l = dto.names as Array<string>;
+    this.languages.push(...l);
   }
 }
