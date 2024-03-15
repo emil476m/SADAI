@@ -30,7 +30,7 @@ import {WebSocketService} from "../WebsocketService";
         <ion-card id="textCard" *ngFor="let message of this.ws.messages"
                   [ngClass]="{'left-card': !message.isUser, 'right-card': message.isUser}">
           <ion-tab-bar [ngStyle]="{ 'background-color': message.isUser ? '#001087' : '#3A3B3C' }">
-            <ion-title style="color: White">{{ message.message }}</ion-title>
+            <ion-text style="color: White">{{ message.message }}</ion-text>
           </ion-tab-bar>
         </ion-card>
       </ion-content>
