@@ -102,6 +102,25 @@ export class AiChatPage implements OnInit {
     }
   }
 
+  async sendMessageToAI() {
+    if (this.message.value != null) {
+      let text: Message = {
+        message: this.message.value,
+        isUser: true,
+      }
+
+      this.ws.messages.push(text)
+
+      var object = {
+        eventType: "ClientWantsAIResponse",
+        message: text.message,
+        isUser: true
+      }
+
+      this.ws.socket.send(JSON.stringify(object));
+    }
+  }
+
 
   async getConnection() {
     //ToDo esablish socket
