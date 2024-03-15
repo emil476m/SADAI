@@ -14,22 +14,28 @@ public class ClientWantsToGetLangueges: BaseEventHandler<ClientWantsToGetLangueg
 
     public override async Task Handle(ClientWantsToGetLanguegesDto dto, IWebSocketConnection socket)
     {
-        string apikey = Environment.GetEnvironmentVariable("tapikey");
-        string region = Environment.GetEnvironmentVariable("tregion");
-        TextTranslationClient ttc = new TextTranslationClient(new AzureKeyCredential(apikey),
-            new Uri("https://api.cognitive.microsofttranslator.com"));
-        Response<GetLanguagesResult> response = await ttc.GetLanguagesAsync().ConfigureAwait(false);
-        GetLanguagesResult languages = response.Value;
-        Dictionary<string, string> listofLanguages = new ();
-        List<string> listofNames = new List<string>();
-        foreach (var translationLanguage in languages.Translation)
+        try
         {
-            listofLanguages.TryAdd(translationLanguage.Value.Name, translationLanguage.Key);
-            StateService.languages.TryAdd(socket.ConnectionInfo.Id, listofLanguages);
-            listofNames.Add(translationLanguage.Value.Name);
-        }
+            string apikey = Environment.GetEnvironmentVariable("tapikey");
+            TextTranslationClient ttc = new TextTranslationClient(new AzureKeyCredential(apikey),
+                new Uri("https://api.cognitive.microsofttranslator.com"));
+            Response<GetLanguagesResult> response = await ttc.GetLanguagesAsync().ConfigureAwait(false);
+            GetLanguagesResult languages = response.Value;
+            Dictionary<string, string> listofLanguages = new();
+            List<string> listofNames = new List<string>();
+            foreach (var translationLanguage in languages.Translation)
+            {
+                listofLanguages.TryAdd(translationLanguage.Value.Name, translationLanguage.Key);
+                StateService.languages.TryAdd(socket.ConnectionInfo.Id, listofLanguages);
+                listofNames.Add(translationLanguage.Value.Name);
+            }
 
-        socket.Send(JsonSerializer.Serialize(new ServerReturnsListOfLanguageNames()
-        {names = listofNames}));
+            socket.Send(JsonSerializer.Serialize(new ServerReturnsListOfLanguageNames()
+                { names = listofNames }));
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Failed to get Languages please try again");
+        }
     }
 }

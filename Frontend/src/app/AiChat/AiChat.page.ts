@@ -70,7 +70,7 @@ export class AiChatPage implements OnInit {
     this.botName = "Gemini";
 
     let text1: Message = {
-      message: "Hi I am " + this.botName + "\n I am a AI, all translations may not be accurate so use at your own risk",
+      message: "Hi I am " + this.botName + "\n I am a AI, all translations may not be accurate so use at your own risk, remember to hit select after selecting the languages",
       isUser: false,
     }
 
@@ -92,9 +92,10 @@ export class AiChatPage implements OnInit {
       this.ws.messages.push(text)
 
       var object = {
-        eventType: "ClientWantsToTextServeDto",
-        message: text.message,
-        isUser: text.isUser,
+        eventType: "ClientWantsToTranslateText",
+        text: text.message,
+        toLan: this.ws.toLanguage,
+        fromLan: this.ws.fromLanguage
       }
 
       this.ws.socket.send(JSON.stringify(object));

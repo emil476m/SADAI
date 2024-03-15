@@ -23,3 +23,9 @@ export class ServerReturnsListOfLanguageNames extends BaseDto<ServerReturnsListO
 {
   names? : Array<string>;
 }
+
+export class ServerSendsErrorMessageToClient extends BaseDto<ServerSendsErrorMessageToClient>
+{
+  recivedMessage? : string;
+  errorMessage? : string;
+}

@@ -1,7 +1,12 @@
 import {Message} from "./models/Message.model";
 import {Router} from "@angular/router";
 import {ToastController} from "@ionic/angular";
-import {BaseDto, ServerRespondsToUser, ServerReturnsListOfLanguageNames} from "../assets/BaseDto";
+import {
+  BaseDto,
+  ServerRespondsToUser,
+  ServerReturnsListOfLanguageNames,
+  ServerSendsErrorMessageToClient
+} from "../assets/BaseDto";
 import {Injectable} from "@angular/core";
 
 @Injectable({providedIn: 'root'})
@@ -29,5 +34,17 @@ export class WebSocketService {
   {
     var l = dto.names as Array<string>;
     this.languages.push(...l);
+  }
+
+  async ServerSendsErrorMessageToClient(dto: ServerSendsErrorMessageToClient)
+  {
+    var t = await this.toast.create(
+      {
+        color: "warning",
+        duration: 2000,
+        message: dto.recivedMessage
+      }
+    )
+    t.present();
   }
 }
