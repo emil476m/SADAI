@@ -14,7 +14,7 @@ public class ClientWantsToTranslateText : BaseEventHandler<ClientWantsToTranslat
     public override async Task Handle(ClientWantsToTranslateTextDto dto, IWebSocketConnection socket)
     {
         ContentFilter filter = new ContentFilter();
-        filter.verifyMessage(dto.text);
+        await filter.checkText(dto.text);
 
         var lan = StateService.languages[socket.ConnectionInfo.Id];
         var to = lan[dto.toLan];
