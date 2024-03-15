@@ -20,7 +20,7 @@ public class ContentFilter
         HttpRequestMessage request = new HttpRequestMessage(HttpMethod.Post, "https://toxisityfilter.cognitiveservices.azure.com/contentsafety/text:analyze?api-version=2023-10-01");
         
         request.Headers.Add("accept", "application/json");
-        request.Headers.Add("Ocp-Apim-Subscription-Key", Environment.GetEnvironmentVariable("aikey"));
+        request.Headers.Add("Ocp-Apim-Subscription-Key", Environment.GetEnvironmentVariable("ContentFilterKey"));
 
         var req = new RequestModel(message, new List<string>
             { "Hate", "Sexual", "SelfHarm", "Violence" }, "FourSeverityLevels");
