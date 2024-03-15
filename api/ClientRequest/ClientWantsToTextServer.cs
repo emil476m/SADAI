@@ -9,7 +9,7 @@ public class ClientWantsToTextServer : BaseEventHandler<ClientWantsToTextServeDt
 {
     public override Task Handle(ClientWantsToTextServeDto dto, IWebSocketConnection socket)
     {
-        var echo = new ClientWantsToTextServeDto()
+        var echo = new ServerRespondsToUser()
         {
             message = "echo: " + dto.message,
             isUser = false

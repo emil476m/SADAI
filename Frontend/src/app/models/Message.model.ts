@@ -1,4 +1,4 @@
 export interface Message {
-  message: string;
-  isUser: boolean;
+  message?: string;
+  isUser?: boolean;
 }
