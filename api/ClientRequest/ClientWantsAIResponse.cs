@@ -44,7 +44,7 @@ public class ClientWantsAIResponse: BaseEventHandler<ClientWantsAIResponseDto>
         
         var echo = new ServerRespondsToUser()
         {
-            message = "ChatBot: " + responseText,
+            message = responseText,
             isUser = false
         };
         var messageToClient = JsonConvert.SerializeObject(echo);

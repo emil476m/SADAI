@@ -10,7 +10,9 @@ import {ToastController} from "@ionic/angular";
 export class AppComponent implements OnInit{
   Tlanguage = new FormControl("", [Validators.required]);
   Flanguage  = new FormControl("", [Validators.required]);
-  IsToggled : boolean = false;
+  OpenAIToggle = new FormControl(false);
+  translateDisabled: boolean = false
+
   constructor(protected ws: WebSocketService, private toast : ToastController) {
   }
 
@@ -44,5 +46,11 @@ export class AppComponent implements OnInit{
       }
     )
     t.present();
+  }
+
+  checktoggle() {
+    this.ws.openAiToggle = this.OpenAIToggle.value!;
+
+    this.translateDisabled = this.OpenAIToggle.value!;
   }
 }

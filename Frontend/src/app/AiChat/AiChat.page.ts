@@ -37,7 +37,7 @@ import {WebSocketService} from "../WebsocketService";
     </ion-content>
     <ion-item>
       <ion-input placeholder="  text...  " [formControl]="message" id="messageInput"></ion-input>
-      <ion-button (click)="sendMessage()" id="button" slot="end">
+      <ion-button (click)="chooseMessageType()" id="button" slot="end">
         <ion-icon name="send-outline"></ion-icon>
         <p>&#160; send message</p>
       </ion-button>
@@ -78,8 +78,6 @@ export class AiChatPage implements OnInit {
     this.ws.messages = [
       text1
     ];
-
-    this.getConnection();
   }
 
   async sendMessage() {
@@ -122,8 +120,11 @@ export class AiChatPage implements OnInit {
   }
 
 
-  async getConnection() {
-    //ToDo esablish socket
+  async chooseMessageType(){
+    if (this.ws.openAiToggle)
+      this.sendMessageToAI();
+    else
+      this.sendMessage();
   }
 
 }

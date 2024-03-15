@@ -15,6 +15,7 @@ export class WebSocketService {
   languages : Array<string> = [];
   toLanguage: string = "";
   fromLanguage: string = "";
+  openAiToggle: boolean = false;
   socket: WebSocket = new WebSocket("ws://localhost:8181");
 
   constructor(public router: Router, public toast: ToastController) {
