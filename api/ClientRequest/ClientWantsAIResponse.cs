@@ -1,4 +1,5 @@
 using System.Text;
+using api.Filter;
 using Fleck;
 using lib;
 using Newtonsoft.Json;
@@ -17,6 +18,9 @@ public class ClientWantsAIResponse: BaseEventHandler<ClientWantsAIResponseDto>
     
     public override async Task Handle(ClientWantsAIResponseDto dto, IWebSocketConnection socket)
     {
+        
+        ContentFilter filter = new ContentFilter();
+        await filter.checkText(dto.message);
         
         var payload = new
         {
