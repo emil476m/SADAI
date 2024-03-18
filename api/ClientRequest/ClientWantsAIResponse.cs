@@ -14,7 +14,7 @@ public class ClientWantsAIResponse: BaseEventHandler<ClientWantsAIResponseDto>
     private static readonly HttpClient client = new HttpClient();
     public static string endPointURL = "https://api.openai.com/v1/chat/completions";
     public static string apiKey = Environment.GetEnvironmentVariable("aikey");
-    public static string AITopic = "You are an intelligent assistant who always answers questions with a joke";
+    public static string AITopic = "You are an intelligent assistant who always answers questions";
     
     public override async Task Handle(ClientWantsAIResponseDto dto, IWebSocketConnection socket)
     {
