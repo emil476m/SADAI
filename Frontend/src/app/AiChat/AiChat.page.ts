@@ -67,10 +67,10 @@ export class AiChatPage implements OnInit {
 
 
   ngOnInit() {
-    this.botName = "Gemini";
+    this.botName = "Sally";
 
     let text1: Message = {
-      message: "Hi I am " + this.botName + "\n I am a AI, all translations may not be accurate so use at your own risk, remember to hit select after selecting the languages",
+      message: "Hi I am " + this.botName + "\n. I am an AI, all translations may not be accurate, so use at your own risk. Remember to hit select, after selecting the languages for the translate feature.",
       isUser: false,
     }
 
