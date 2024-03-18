@@ -16,11 +16,19 @@
               </ion-select>
             </ion-item>
             <ion-item>
-              <ion-button (click)="select()">Select</ion-button>
+              <ion-button [disabled]="translateDisabled" (click)="select()">Select</ion-button>
+            </ion-item>
+          </div>
+        </ion-item>
+        <ion-item>
+          <div>
+            <ion-item>
+              <ion-toggle [formControl]="OpenAIToggle" (ionChange)="checktoggle()">Use GPT3.5</ion-toggle >
             </ion-item>
           </div>
         </ion-item>
       </ion-content>
+
     </ion-menu>
     <ion-router-outlet id="main-content"></ion-router-outlet>
   </ion-split-pane>

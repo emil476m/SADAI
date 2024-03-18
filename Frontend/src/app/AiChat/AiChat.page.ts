@@ -27,17 +27,17 @@ import {WebSocketService} from "../WebsocketService";
 
       <ion-content #textWindow id="Textcontainer" [scrollEvents]="true">
 
-        <ion-card id="textCard" *ngFor="let message of this.ws.messages"
+        <ion-card [ngStyle]="{ 'background-color': message.isUser ? '#001087' : '#3A3B3C' }" id="textCard" *ngFor="let message of this.ws.messages"
                   [ngClass]="{'left-card': !message.isUser, 'right-card': message.isUser}">
-          <ion-tab-bar [ngStyle]="{ 'background-color': message.isUser ? '#001087' : '#3A3B3C' }">
-            <ion-text style="color: White">{{ message.message }}</ion-text>
-          </ion-tab-bar>
+
+            <ion-card-content style="color: White">{{ message.message }}</ion-card-content>
+
         </ion-card>
       </ion-content>
     </ion-content>
     <ion-item>
       <ion-input placeholder="  text...  " [formControl]="message" id="messageInput"></ion-input>
-      <ion-button (click)="sendMessage()" id="button" slot="end">
+      <ion-button (click)="chooseMessageType()" id="button" slot="end">
         <ion-icon name="send-outline"></ion-icon>
         <p>&#160; send message</p>
       </ion-button>
@@ -67,10 +67,10 @@ export class AiChatPage implements OnInit {
 
 
   ngOnInit() {
-    this.botName = "Gemini";
+    this.botName = "Sally";
 
     let text1: Message = {
-      message: "Hi I am " + this.botName + "\n I am a AI, all translations may not be accurate so use at your own risk, remember to hit select after selecting the languages",
+      message: "Hi I am " + this.botName + "\n. I am an AI, all translations may not be accurate, so use at your own risk. Remember to hit select, after selecting the languages for the translate feature.",
       isUser: false,
     }
 
@@ -78,8 +78,6 @@ export class AiChatPage implements OnInit {
     this.ws.messages = [
       text1
     ];
-
-    this.getConnection();
   }
 
   async sendMessage() {
@@ -102,9 +100,31 @@ export class AiChatPage implements OnInit {
     }
   }
 
+  async sendMessageToAI() {
+    if (this.message.value != null) {
+      let text: Message = {
+        message: this.message.value,
+        isUser: true,
+      }
 
-  async getConnection() {
-    //ToDo esablish socket
+      this.ws.messages.push(text)
+
+      var object = {
+        eventType: "ClientWantsAIResponse",
+        message: text.message,
+        isUser: true
+      }
+
+      this.ws.socket.send(JSON.stringify(object));
+    }
+  }
+
+
+  async chooseMessageType(){
+    if (this.ws.openAiToggle)
+      this.sendMessageToAI();
+    else
+      this.sendMessage();
   }
 
 }
