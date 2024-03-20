@@ -97,6 +97,7 @@ export class AiChatPage implements OnInit {
       }
 
       this.ws.socket.send(JSON.stringify(object));
+      this.message.reset();
     }
   }
 
@@ -116,6 +117,7 @@ export class AiChatPage implements OnInit {
       }
 
       this.ws.socket.send(JSON.stringify(object));
+      this.message.reset();
     }
   }
 
